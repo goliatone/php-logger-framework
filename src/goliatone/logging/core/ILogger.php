@@ -1,40 +1,120 @@
 <?php
+namespace goliatone\logging\core;
 
 /**
+ * Describes a logger instance
+ *
+ * The message MUST be a string or object implementing __toString().
+ *
+ * The message MAY contain placeholders in the form: {foo} where foo
+ * will be replaced by the context data in key "foo".
+ *
+ * The context array can contain arbitrary data, the only assumption that
+ * can be made by implementors is that if an Exception instance is given
+ * to produce a stack trace, it MUST be in a key named "exception".
+ *
+ * See https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+ * for the full interface specification.
+ * 
  * @package     GDispatcher
  * @category    Interface
  * @author      Emiliano Burgos <hello@goliatone.com>
  * @copyright   (c) 20011 Emiliano Burgos
  * @license     http://kohanaphp.com/license
  */
-namespace goliatone\events\core;
-
-use goliatone\events\core\CoreEvent;
-
 interface ILogger
 {
 
     /**
-     * Registers a listener
+     * System is unusable.
      *
-     * @param string    $event      Event to listen for
-     * @param mixed     $callback   Callback to trigger
-     * @param priority  $priority   Listener priority in the queue.
-     * 
-     * @throws  Kohana_Exception    If not valid callback provided.
+     * @param string $message
+     * @param array $context
+     * @return null
      */
-    public function add_listener($event, $callback, $priority = 0);
+    public function emergency($message, array $context = array());
 
     /**
-     * Triggers an event
+     * Action must be taken immediately.
      *
-     * @param Dispatcher_Event $event            Event object
+     * Example: Entire website down, database unavailable, etc. This should
+     * trigger the SMS alerts and wake you up.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
      */
-    public function dispatch_event(CoreEvent $event);
-    
+    public function alert($message, array $context = array());
+
     /**
-     * Will return TRUE if there is any registered listener for a given
-     * event->type.
+     * Critical conditions.
+     *
+     * Example: Application component unavailable, unexpected exception.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
      */
-    public function will_trigger($event_name);
+    public function critical($message, array $context = array());
+
+    /**
+     * Runtime errors that do not require immediate action but should typically
+     * be logged and monitored.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function error($message, array $context = array());
+
+    /**
+     * Exceptional occurrences that are not errors.
+     *
+     * Example: Use of deprecated APIs, poor use of an API, undesirable things
+     * that are not necessarily wrong.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function warning($message, array $context = array());
+
+    /**
+     * Normal but significant events.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function notice($message, array $context = array());
+
+    /**
+     * Interesting events.
+     *
+     * Example: User logs in, SQL logs.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function info($message, array $context = array());
+
+    /**
+     * Detailed debug information.
+     *
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function debug($message, array $context = array());
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function log($level, $message, array $context = array());
 }

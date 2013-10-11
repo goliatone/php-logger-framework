@@ -2,6 +2,7 @@
 
 namespace goliatone\logging\core;
 
+use goliatone\logging\core\LogLevel;
 use goliatone\logging\core\ILoggerConfig;
 
 class LoggerConfig implements ILoggerConfig
@@ -42,7 +43,7 @@ class LoggerConfig implements ILoggerConfig
     protected $_id;
 
     /** @private **/
-    private $_mode = LoggerConfig::DEBUG;
+    public $mode = LoggerConfig::DEBUG;
 
     /** @private **/
     private $_config;
@@ -51,28 +52,28 @@ class LoggerConfig implements ILoggerConfig
     private $_setup;
 
     /** @private **/
-    private $_managerPackage;
+    public $manager;
 
     /** @private **/
-    protected $_logger;
+    public $logger;
 
     /** @private **/
-    protected $_debugger;
+    public $debugger;
 
     /** @private **/
-    protected $_threshold = "ALL";
+    public $threshold;
 
     /** @private **/
-    protected $_publishers;
+    public $publishers;
 
     /** @private **/
-    protected $_levelFilters;
+    public $levelFilters;
 
     /** @private **/
-    protected $_disabledLevels;
+    public $disabledLevels;
 
     /** @private **/
-    protected $_disabledPackages;
+    protected $disabledPackages;
         
     /**
      *
@@ -89,7 +90,28 @@ class LoggerConfig implements ILoggerConfig
      */
     public function load( $config )
     {
+        //TODO: Implement!!
+        $this->reset();
         
+        $this->_config = $config;
+        
+        if(array_key_exists('mode', $config)) $this->_mode = $config['mode'];
+        
+        $this->_setup = $config[$this->_mode];
+        
+        //List only the public props. If we do it from inside class we get
+        //all props.
+        $fields = function($obj) { return get_class_vars($obj);};
+        foreach($fields as $field)
+        {
+            if(array_key_exists($field, $config))
+            {
+                $value = $config[$field];
+                $setter = "set".ucfirst($field);
+                if(method_exists($this, $setter)) $setter($value);
+                else $this->{$field} = $value;
+            }
+        }
     }
 
     /**
@@ -98,7 +120,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function setMode( /*:String*/$mode )
     {
-        $this->_model = $mode;
+        $this->mode = $mode;
     }
 
     /**
@@ -109,22 +131,30 @@ class LoggerConfig implements ILoggerConfig
         $this->_config = NULL;
         $this->_setup  = NULL;
 
-        $this->_publishers       = array();
-        $this->_levelFilters     = array();
-        $this->_disabledLevels   = array();
-        $this->_disabledPackages = array();
+        $this->publishers       = array();
+        $this->levelFilters     = array();
+        $this->disabledLevels   = array();
+        $this->disabledPackages = array();
         
-        $_logger = LoggerConfig::$DEFAULT_LOGGER_ID;
-        $_debugger = LoggerConfig::$DEFAULT_DEBUGGER_ID;
-        $_managerPackage = LoggerConfig::$DEFAULT_MANAGER_PACKAGE;
+        $this->mode = LoggerConfig::DEBUG;
+        $this->threshold = LogLevel::ALL;
+        $this->logger = LoggerConfig::$DEFAULT_LOGGER_ID;
+        $this->debugger = LoggerConfig::$DEFAULT_DEBUGGER_ID;
+        $this->manager = LoggerConfig::$DEFAULT_MANAGER_PACKAGE;
     }
-
+    
+    public function setDisabledLevels($levels)
+    {
+        $levels = explode(',', $levels);
+        $this->disabledLevels = $levels;    
+    }
+    
     /**
      *
      */
     public function getManagerPackage( )
     {
-        return $this->_managerPackage;
+        return $this->manager;
     }
 
     /**
@@ -132,7 +162,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getThreshold()
     {
-        return $this->_threshold;
+        return $this->threshold;
     }
 
     /**
@@ -140,7 +170,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getPublishers()
     {
-        return $this->_publishers;
+        return $this->publishers;
     }
 
     /**
@@ -148,7 +178,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getLevelFilters()
     {
-        return $this->_levelFilters;
+        return $this->levelFilters;
     }
 
     /**
@@ -156,7 +186,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getDisabledLevels()
     {
-        return $this->_disabledLevels;
+        return $this->disabledLevels;
     }
 
     /**
@@ -164,7 +194,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getDisabledPackages()
     {
-        return $this->_disabledPackages;
+        return $this->disabledPackages;
     }
 
     /**
@@ -172,7 +202,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getDebugger()
     {
-        return $this->_debugger;
+        return $this->debugger;
     }
 
     /**
@@ -180,7 +210,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getLogger()
     {
-        return $this->_logger;
+        return $this->logger;
     }
 
     /**
@@ -189,7 +219,7 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getNotNullDebugger()
     {
-         return $this->_debugger != self::$DEFAULT_DEBUGGER_ID;
+         return $this->debugger != self::$DEFAULT_DEBUGGER_ID;
     }
 
     /**
@@ -198,6 +228,6 @@ class LoggerConfig implements ILoggerConfig
      */
     public function getNotNullLogger()
     {
-        return $this->_logger != self::$DEFAULT_LOGGER_ID;        
+        return $this->logger != self::$DEFAULT_LOGGER_ID;        
     }
 }

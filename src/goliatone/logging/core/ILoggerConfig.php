@@ -11,9 +11,9 @@ interface ILoggerConfig
 
     /**
      * TODO: We have different deserializers => YAML/JSON/DDBB/XML/ETC
-     * @param   xml
+     * @param   $config
      */
-    public function fromXML( $xml );
+    public function load( $config );
 
     /**
      *

@@ -72,6 +72,8 @@ class LoggerFilterManager implements ILoggerFilterManager
      */
     public function update( $pk, ILogLevel $level )
     {
+        if(! $this->contains($pk)) return;
+        
         $filter = $this->_filters[ $pk ];
         $filter->setLevel( $level, $this );
     }
@@ -86,9 +88,9 @@ class LoggerFilterManager implements ILoggerFilterManager
         $levels = explode('.', $package);
         while(($name = array_pop($levels)))
         {
-            if(array_key_exists($name, $this->_filters)) return $this->_filters[$name];
+            if($this->contains($name)) return $this->_filters[$name];
         }
-        return $this->_filters[ 'root' ];
+        return $this->getRootFilter();
     }
 
 

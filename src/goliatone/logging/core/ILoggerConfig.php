@@ -1,5 +1,5 @@
 <?php
-
+namespace goliatone\logging\core\ILoggerConfig;
 
 interface ILoggerConfig
 {

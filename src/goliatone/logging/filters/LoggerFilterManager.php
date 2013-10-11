@@ -22,6 +22,8 @@ class LoggerFilterManager implements ILoggerFilterManager
     {
         $this->_rootFilter = new LoggerFilter( "root", LogLevel::ALL );
         $this->_rootFilter->_isRoot = TRUE;
+        $this->_filters = array();
+        $this->_filters['root'] = $this->_rootFilter;
     }
 
     /**
@@ -79,22 +81,14 @@ class LoggerFilterManager implements ILoggerFilterManager
      * @param   name
      * @return  ILoggerFilter
      */
-    public function getLogFilterFor( $name )
+    public function getLogFilterFor( $package )
     {
-        
-        while( array_key_exists($name, $this->_filters) === FALSE) {
-            /*
-             * if there's no dot, this was a top level package,
-             * so the only thing left is the root
-             */
-            $dotIndex = $name.lastIndexOf(".");
-            if ( $dotIndex === -1 ) return $rootFilter;
-
-            // search the next package up
-            $name = $name.substring( 0, $dotIndex );
+        $levels = explode('.', $package);
+        while(($name = array_pop($levels)))
+        {
+            if(array_key_exists($name, $this->_filters)) return $this->_filters[$name];
         }
-
-        return $this->_filters[ name ];
+        return $this->_filters[ 'root' ];
     }
 
 

@@ -45,3 +45,5 @@ Icon
 # composer
 *.lock
 vendor/*
+
+.idea

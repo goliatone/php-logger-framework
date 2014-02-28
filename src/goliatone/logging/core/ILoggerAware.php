@@ -1,15 +1,18 @@
-<?php
-namespace goliatone\logging\core;
-/**
- * Describes a logger-aware instance
- */
-interface ILoggerAware
-{
+<?php namespace goliatone\flatg\logging\core {
+
+
     /**
-     * Sets a logger instance on the object
-     *
-     * @param LoggerInterface $logger
-     * @return null
+     * Interface ILoggerAware
+     * @package goliatone\flatg\logging\core
      */
-    public function setLogger(ILogger $logger);
+    interface ILoggerAware
+    {
+        /**
+         * Sets a logger instance.
+         *
+         * @param  ILogger $logger
+         * @return ILogger
+         */
+        public function setLogger(ILogger $logger);
+    }
 }

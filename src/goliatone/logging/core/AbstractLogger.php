@@ -1,34 +1,44 @@
 <?php namespace goliatone\flatg\logging\core {
 
 
+
     /**
-     * Interface ILogger
+     * TODO Create BaseObject that implements IConfigurable, IFiltrable
      *
-     * https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+     * Class AbstractLogger, base implementation.
+     * It will delegate all level specific methods
+     * to the `log` method.
      *
      * @package goliatone\flatg\logging\core
      */
-    interface ILogger
+    abstract class AbstractLogger extends CoreObject implements ILogger
     {
+        /**
+         * @var bool
+         */
+        static public $DISABLED = FALSE;
+
         /**
          * Logs with an arbitrary level.
          *
-         * @param mixed  $level
+         * @param mixed $level
          * @param string $message
-         * @param array  $context
+         * @param array $context
          * @return null
          */
-        public function log($level, $message, array $context = array());
-
+        abstract public function log($level, $message, array $context = array());
 
         /**
          * Detailed debug information.
          *
          * @param string $message
-         * @param array  $context
+         * @param array $context
          * @return null
          */
-        public function debug($message, array $context = array());
+        public function debug($message, array $context = array())
+        {
+            $this->log(LogLevel::$DEBUG, $message, $context);
+        }
 
         /**
          * Interesting events.
@@ -36,19 +46,25 @@
          * Example: User logs in, SQL logs.
          *
          * @param string $message
-         * @param array  $context
+         * @param array $context
          * @return null
          */
-        public function info($message, array $context = array());
+        public function info($message, array $context = array())
+        {
+            $this->log(LogLevel::$INFO, $message, $context);
+        }
 
         /**
          * Normal but significant events.
          *
          * @param string $message
-         * @param array  $context
+         * @param array $context
          * @return null
          */
-        public function notice($message, array $context = array());
+        public function notice($message, array $context = array())
+        {
+            $this->log(LogLevel::$NOTICE, $message, $context);
+        }
 
         /**
          * Exceptional occurrences that are not errors.
@@ -58,10 +74,13 @@
          * necessarily wrong.
          *
          * @param string $message
-         * @param array  $context
+         * @param array $context
          * @return null
          */
-        public function warning($message, array $context = array());
+        public function warning($message, array $context = array())
+        {
+            $this->log(LogLevel::$WARNING, $message, $context);
+        }
 
         /**
          * Runtime errors that do not require immediate
@@ -72,7 +91,10 @@
          * @param array $context
          * @return null
          */
-        public function error($message, array $context = array());
+        public function error($message, array $context = array())
+        {
+            $this->log(LogLevel::$ERROR, $message, $context);
+        }
 
         /**
          * Critical conditions.
@@ -84,7 +106,10 @@
          * @param array $context
          * @return null
          */
-        public function critical($message, array $context = array());
+        public function critical($message, array $context = array())
+        {
+            $this->log(LogLevel::$CRITICAL, $message, $context);
+        }
 
         /**
          * Action must be taken immediately.
@@ -98,7 +123,10 @@
          * @param array $context
          * @return null
          */
-        public function alert($message, array $context = array());
+        public function alert($message, array $context = array())
+        {
+            $this->log(LogLevel::$ALERT, $message, $context);
+        }
 
         /**
          * System is unusable.
@@ -107,6 +135,10 @@
          * @param array $context
          * @return null
          */
-        public function emergency($message, array $context = array());
+        public function emergency($message, array $context = array())
+        {
+            $this->log(LogLevel::$EMERGENCY, $message, $context);
+        }
+
     }
 }
